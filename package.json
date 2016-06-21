@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/LiberalOtaku/mutant-list-server/issues"
   },
-  "homepage": "https://github.com/LiberalOtaku/mutant-list-server#readme"
+  "homepage": "https://github.com/LiberalOtaku/mutant-list-server#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "firebase": "^3.0.5",
+    "twilio": "^2.9.1"
+  }
 }
