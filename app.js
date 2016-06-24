@@ -30,7 +30,7 @@ textsRef.on('child_added', function(snapshot) {
     from: process.env.TWILIO_PHONE // From a valid Twilio number
   }, function(err, message) {
     if (err)
-      console.log(message.sid);
+      console.log(err.message);
   });
 });
 
