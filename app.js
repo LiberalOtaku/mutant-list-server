@@ -4,7 +4,7 @@ var http = require('http');
 var firebase = require('firebase');
 var twilio = require('twilio');
 var dotenv = require('dotenv');
-var Mailgun = require('mailgun').Mailgun;
+var mailgun = require('mailgun-js');
 
 // Express server setup
 var app = express();
@@ -20,6 +20,12 @@ var rootRef = firebase.database().ref();
 
 // Authenticate with twilio
 var twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
+
+// Authenticate with mailgun
+var mailgunClient = mailgun({
+  apiKey: process.env.MAILGUN_KEY,
+  domain: process.env.MAILGUN_DOMAIN
+});
 
 // Listen for new texts being added
 var textsRef = rootRef.child('texts');
@@ -38,15 +44,18 @@ textsRef.on('child_added', function(snapshot) {
 // Listen for new emails being added
 var emailsRef = rootRef.child('emails');
 emailsRef.on('child_added', function(snapshot) {
-  var user = snapshot.val();
-  var message = new Mailgun(process.env.MAILGUN_PRV_API_KEY);
-  message.sendText('postmaster@sandboxcfc64157192a4eac8a5f921c9fc89dcf.mailgun.org', user.email,
-    'Welcome to Mutant Office Hours!',
-    'Thank you for registering. Have a good time!',
-    'postmaster@sandboxcfc64157192a4eac8a5f921c9fc89dcf.mailgun.org', {},
-    function(err) {
-      if (err)
-        console.log(err);
+  var email = snapshot.val();
+  var emailData = {
+    from: 'postmaster@' + process.env.MAILGUN_DOMAIN,
+    to: email.email,
+    subject: 'Welcome to Mutant Office Hours!',
+    text: 'Thank you for registering. Have a good time!',
+  };
+  mailgunClient.messages().send(emailData, function (error, body) {
+    console.log(body);
+    if (error) {
+      console.log(error);
+    }
   });
 });
 
