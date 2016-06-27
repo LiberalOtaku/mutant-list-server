@@ -21,6 +21,7 @@
     "dotenv": "^2.0.0",
     "express": "^4.14.0",
     "firebase": "^3.0.5",
+    "mailgun": "^0.5.0",
     "twilio": "^2.9.1"
   }
 }

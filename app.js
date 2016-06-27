@@ -4,6 +4,7 @@ var http = require('http');
 var firebase = require('firebase');
 var twilio = require('twilio');
 var dotenv = require('dotenv');
+var Mailgun = require('mailgun').Mailgun;
 
 // Express server setup
 var app = express();
@@ -31,6 +32,21 @@ textsRef.on('child_added', function(snapshot) {
   }, function(err, message) {
     if (err)
       console.log(err.message);
+  });
+});
+
+// Listen for new emails being added
+var emailsRef = rootRef.child('emails');
+emailsRef.on('child_added', function(snapshot) {
+  var user = snapshot.val();
+  var message = new Mailgun(process.env.MAILGUN_PRV_API_KEY);
+  message.sendText('postmaster@sandboxcfc64157192a4eac8a5f921c9fc89dcf.mailgun.org', user.email,
+    'Welcome to Mutant Office Hours!',
+    'Thank you for registering. Have a good time!',
+    'postmaster@sandboxcfc64157192a4eac8a5f921c9fc89dcf.mailgun.org', {},
+    function(err) {
+      if (err)
+        console.log(err);
   });
 });
 
